@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAXCA AI - Master Engine</title>
+    <!-- Google Fonts Added for ZAXCA Branding -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-sage: #E2F0CC;      /* 70% Soft Sage Mint */
+            --bg-forest: #012F13;    /* 20% Dark Forest Green */
+            --accent-apple: #8BC53D; /* 10% Apple Green */
+            --text-dark: #011207;    /* Near-Black Green */
+            --text-light: #F8FAFC;   /* Light text */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-sage);
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR DESIGN --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-forest);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            color: var(--text-light);
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .sidebar-logo {
+            width: 140px; 
+            filter: grayscale(1) invert(1) brightness(200%);
+            mix-blend-mode: screen; 
+        }
+
+        .badge {
+            background-color: var(--accent-apple);
+            color: var(--text-dark);
+            font-size: 0.7rem;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .menu-list li {
+            color: #b0c9ab;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 50px;
+        }
+
+        .menu-list li:hover {
+            background-color: rgba(226, 240, 204, 0.1);
+            color: var(--accent-apple);
+            transform: translateX(5px);
+        }
+
+        .widget-box {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(226, 240, 204, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 80px;
+            color: #b0c9ab;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .widget-title {
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--bg-sage);
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(226, 240, 204, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .sidebar-footer button {
+            flex: 1;
+            padding: 12px;
+            background-color: transparent;
+            border: 2px solid var(--accent-apple);
+            color: var(--accent-apple);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer button:hover {
+            background-color: var(--accent-apple);
+            color: var(--text-dark);
+        }
+
+        /* --- MAIN CHAT AREA --- */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: var(--bg-sage);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+        }
+
+        .logo-box {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-forest);
+            overflow: hidden;
+            padding: 5px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(1, 47, 19, 0.15);
+        }
+
+        .logo-box img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .chat-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 60px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .welcome-text {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--bg-forest);
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Chat Messages */
+        .message-row { display: flex; width: 100%; margin-bottom: 20px; }
+        .message-row.user { justify-content: flex-end; }
+        .message-row.ai { justify-content: flex-start; }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 15px 22px;
+            border-radius: 20px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .message-bubble.user {
+            background-color: var(--bg-forest);
+            color: var(--text-light);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-bubble.ai {
+            background-color: white;
+            color: var(--text-dark);
+            border-bottom-left-radius: 5px;
+            border: 1px solid rgba(1, 47, 19, 0.1);
+        }
+        
+        .message-bubble.system {
+            background-color: rgba(139, 197, 61, 0.1);
+            color: var(--bg-forest);
+            border: 1px solid var(--accent-apple);
+            font-style: italic;
+            border-radius: 12px;
+        }
+
+        .loading-text {
+            color: var(--bg-forest);
+            font-style: italic;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* --- INPUT SECTION --- */
+        .input-section {
+            padding: 10px 60px 25px 60px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .action-chip {
+            background-color: transparent;
+            border: 2px solid var(--bg-forest);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: var(--bg-forest);
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .action-chip:hover {
+            background-color: var(--bg-forest);
+            color: var(--bg-sage);
+        }
+
+        .model-select {
+            width: 100%;
+            padding: 14px 20px;
+            background-color: white;
+            border: 2px solid var(--bg-forest);
+            color: var(--bg-forest);
+            border-radius: 50px;
+            outline: none;
+            font-weight: 700;
+            cursor: pointer;
+            appearance: none;
+            box-shadow: 0 4px 10px rgba(1, 47, 19, 0.05);
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border: 2px solid var(--bg-forest);
+            border-radius: 50px;
+            padding: 5px 25px;
+            box-shadow: 0 8px 25px rgba(1, 47, 19, 0.1);
+        }
+
+        .input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 15px 10px;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .input-box input::placeholder { color: #8a9c90; }
+
+        .input-icons {
+            display: flex;
+            gap: 15px;
+            color: var(--bg-forest);
+            cursor: pointer;
+            font-size: 1.4rem;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .input-icons span:hover { color: var(--accent-apple); transform: scale(1.1); }
+
+        .extra-toggles {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 2px solid var(--bg-forest);
+            color: var(--bg-forest);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--bg-forest);
+            color: var(--bg-sage);
+        }
+
+        /* Special style for Clear Chat button */
+        .clear-btn:hover {
+            background-color: #ff4757 !important;
+            border-color: #ff4757 !important;
+            color: white !important;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-sage); }
+        ::-webkit-scrollbar-thumb { background: rgba(1, 47, 19, 0.3); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="logo-text.jpg" alt="ZAXCA" class="sidebar-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span style="display:none; font-weight:900; font-size:1.5rem; color:white;">ZAXCA</span>
+            <span class="badge">Chat Plus</span>
+        </div>
+        
+        <ul class="menu-list">
+            <li onclick="openModule('Library 📚')">Library</li>
+            <li onclick="openModule('FootPrint 🖨️')">FootPrint</li>
+            <li onclick="openModule('PCB Output Image 🖼️')">PCB Output Image</li>
+            <li onclick="openModule('PCB Editor 🛠️')">PCB Editor</li>
+            <li onclick="openModule('Schematic View 📐')">Schematic View</li>
+            <li onclick="openModule('Plugin Manager 🔌')">Plugin</li>
+        </ul>
+
+        <div class="widget-box">
+            <div class="widget-title">📌 Pin Message</div>
+            No pinned PCB components yet.
+        </div>
+
+        <div class="widget-box">
+            <div class="widget-title">📜 PCB User History</div>
+            • ESP32_Relay_Board_v1.pcb<br>
+            • Solar_Inverter_Shield.pcb
+        </div>
+
+        <div class="sidebar-footer">
+            <button onclick="openModule('Chat 💬')">Chat</button>
+            <button onclick="openModule('Account 👤')">Account</button>
+        </div>
+    </aside>
+
+    <main class="main-area">
+        <div class="top-nav">
+            <div class="logo-box">
+                <img src="logo-icon.jpg" alt="Icon" onerror="this.style.display='none'; this.parentElement.innerText='LOGO';">
+            </div>
+        </div>
+
+        <div class="chat-content" id="chat-box">
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-text">Welcome to <br>Team ZAXCA</div>
+                <div class="quick-actions">
+                    <div class="action-chip" onclick="setInput('Create PCB for ESP32')">Create PCB</div>
+                    <div class="action-chip" onclick="setInput('Open PCB editor')">PCB editor</div>
+                    <div class="action-chip" onclick="setInput('Search the web for latest ICs')">Search the web</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="loading-text" id="loading-msg" style="padding: 0 60px;">⚡ ZAXCA Agent is processing...</div>
+
+        <div class="input-section">
+            <select class="model-select" id="model-selector">
+                <option>⚡ V1 - Base Engine</option>
+                <option>⚡ V2 - Logic Processor</option>
+                <option>⚡ V3 - Advanced Core</option>
+                <option>🚀 V4 - Co-Founder of Electronics</option>
+                <option selected>👑 V5 - Founder of Electronics</option>
+                <option>📐 V.O.E Consultant Only</option>
+                <option>🧠 Agentic AI</option>
+                <option>⚙️ Custom Logic Maker</option>
+                <option>💻 FPGA Editor</option>
+            </select>
+
+            <div class="input-box">
+                <span class="input-icons" style="margin-right: 10px;" title="Upload Assets">➕</span>
+                <input type="text" id="user-input" placeholder="ASK ZAXCA..." onkeypress="handleEnter(event)">
+                <div class="input-icons">
+                    <span title="Advanced Tool">⚡</span>
+                    <span title="Send Prompt" onclick="sendMessage()">⬆️</span>
+                </div>
+            </div>
+
+            <div class="extra-toggles">
+                <button class="toggle-btn">🧠 Think</button>
+                <button class="toggle-btn">💬 Live chat</button>
+                <button class="toggle-btn clear-btn" onclick="clearChat()">🗑️ Clear Chat</button>
+            </div>
+
+            <div class="ai-warning" style="font-size: 0.8rem; color: #555; text-align: center;">
+                ZAXCA is AI and can make mistakes.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "https://zexca-api-production.up.railway.app/generate"; 
+        
+        let chatHistory = JSON.parse(localStorage.getItem('zaxca_history')) || [];
+
+        window.onload = function() {
+            if (chatHistory.length > 0) {
+                const welcomeScreen = document.getElementById("welcome-screen");
+                if (welcomeScreen) welcomeScreen.style.display = "none";
+                const chatBox = document.getElementById("chat-box");
+                
+                chatHistory.forEach(msg => {
+                    if (msg.role === 'user') {
+                        chatBox.innerHTML += `<div class="message-row user"><div class="message-bubble user">${msg.content}</div></div>`;
+                    } else if (msg.role === 'ai') {
+                        chatBox.innerHTML += `<div class="message-row ai"><div class="message-bubble ai"><strong>ZAXCA:</strong><br>${msg.content}</div></div>`;
+                    } else if (msg.role === 'system') {
+                        chatBox.innerHTML += `<div class="message-row ai"><div class="message-bubble system"><strong>⚙️ System:</strong> ${msg.content}</div></div>`;
+                    }
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        };
+
+        function saveToMemory(role, content) {
+            chatHistory.push({ role: role, content: content });
+            localStorage.setItem('zaxca_history', JSON.stringify(chatHistory));
+        }
+
+        function clearChat() {
+            localStorage.removeItem('zaxca_history');
+            chatHistory = [];
+            document.getElementById("chat-box").innerHTML = `
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-text">Welcome to <br>Team ZAXCA</div>
+                    <div class="quick-actions">
+                        <div class="action-chip" onclick="setInput('Create PCB for ESP32')">Create PCB</div>
+                        <div class="action-chip" onclick="setInput('Open PCB editor')">PCB editor</div>
+                        <div class="action-chip" onclick="setInput('Search the web for latest ICs')">Search the web</div>
+                    </div>
+                </div>`;
+        }
+
+        function setInput(text) {
+            document.getElementById("user-input").value = text;
+        }
+
+        function openModule(moduleName) {
+            const chatBox = document.getElementById("chat-box");
+            const welcomeScreen = document.getElementById("welcome-screen");
+            
+            if (welcomeScreen) welcomeScreen.style.display = "none";
+
+            const sysMsg = `Initializing ${moduleName} workspace... Please wait.`;
+            chatBox.innerHTML += `
+                <div class="message-row ai">
+                    <div class="message-bubble system">
+                        <strong>⚙️ System Command:</strong> ${sysMsg}
+                    </div>
+                </div>`;
+            
+            saveToMemory('system', sysMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const chatBox = document.getElementById("chat-box");
+            const welcomeScreen = document.getElementById("welcome-screen");
+            const loadingMsg = document.getElementById("loading-msg");
+            const modelSelector = document.getElementById("model-selector");
+            
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            if (welcomeScreen) welcomeScreen.style.display = "none";
+
+            // Add User Message
+            chatBox.innerHTML += `
+                <div class="message-row user">
+                    <div class="message-bubble user">${message}</div>
+                </div>`;
+            saveToMemory('user', message);
+            
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+            loadingMsg.style.display = "block";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        prompt: message,
+                        model: modelSelector.value 
+                    })
+                });
+
+                const data = await response.json();
+                loadingMsg.style.display = "none";
+
+                if (data && data.response) {
+                    let formattedResponse = data.response.replace(/\n/g, '<br>');
+                    // Formating bold text nicely
+                    formattedResponse = formattedResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    
+                    chatBox.innerHTML += `
+                        <div class="message-row ai">
+                            <div class="message-bubble ai"><strong>ZAXCA:</strong><br>${formattedResponse}</div>
+                        </div>`;
+                    saveToMemory('ai', formattedResponse);
+                } else {
+                    let errorText = data.error || data.response || "Unknown Server Error";
+                    chatBox.innerHTML += `
+                        <div class="message-row ai">
+                            <div class="message-bubble ai" style="color: red;"><strong>ZAXCA Error:</strong> ${errorText}</div>
+                        </div>`;
+                }
+            } catch (error) {
+                loadingMsg.style.display = "none";
+                chatBox.innerHTML += `
+                    <div class="message-row ai">
+                        <div class="message-bubble ai" style="color: red;"><strong>Connection Failed!</strong> Check Railway Server.</div>
+                    </div>`;
+            }
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleEnter(event) {
+            if (event.key === "Enter") sendMessage();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAXCA AI Architecture Image</title>
+    <!-- Importing Mermaid.js for rendering graphical images from code -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background-color: #011207; /* Super Dark ZAXCA Background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #E2F0CC;
+        }
+        .image-container {
+            background: #E2F0CC; /* Sage Mint Base */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(139, 197, 61, 0.3); /* Apple Green Glow */
+        }
+        h2 {
+            text-align: center;
+            color: #012F13;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="image-container">
+        <h2>🚀 ZAXCA AI - Master Architecture</h2>
+        
+        <!-- THE ARCHITECTURE IMAGE LOGIC -->
+        <div class="mermaid">
+            graph TD
+                %% Defining ZAXCA Brand Colors for the Image
+                classDef user fill:#8BC53D,stroke:#011207,stroke-width:2px,color:#011207,font-weight:bold;
+                classDef ui fill:#ffffff,stroke:#012F13,stroke-width:3px,color:#012F13,font-weight:bold;
+                classDef api fill:#012F13,stroke:#8BC53D,stroke-width:3px,color:#E2F0CC,font-weight:bold;
+                classDef core fill:#011207,stroke:#8BC53D,stroke-width:4px,color:#8BC53D,font-weight:bold;
+                classDef tools fill:#E2F0CC,stroke:#012F13,stroke-width:2px,color:#012F13,stroke-dasharray: 5 5;
+
+                %% The Graph Connections
+                U((🧑‍💻 USER<br>Enter Prompt)):::user -->|HTTP POST| UI[🖥️ ZAXCA Client Application<br>Web Interface]:::ui
+                
+                UI -->|JSON Data| API[🌉 API Gateway<br>Railway Server]:::api
+                API -->|Returns Data| UI
+                
+                API -->|Secured Connection| CORE{🧠 ZAXCA MASTER ENGINE<br>AI Agent Core}:::core
+                CORE -->|Processes Logic| API
+
+                CORE <--> T1[(📚 PCB Library DB)]:::tools
+                CORE <--> T2[⚡ V.O.E Consultant]:::tools
+                CORE <--> T3[🌐 Web Search Agent]:::tools
+                CORE <--> T4[🔌 Custom Logic Maker]:::tools
+        </div>
+    </div>
+
+    <script>
+        // Magic code to render the image
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</body>
+</html>
