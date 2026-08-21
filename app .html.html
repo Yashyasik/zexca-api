@@ -349,6 +349,7 @@
             color: var(--bg-sage);
         }
 
+        /* Special style for Clear Chat button */
         .clear-btn:hover {
             background-color: #ff4757 !important;
             border-color: #ff4757 !important;
@@ -450,7 +451,6 @@
     </main>
 
     <script>
-        // 🚀 URL UPDATED FOR YOUR RAILWAY APP
         const API_URL = "https://zexca-api-production.up.railway.app/generate"; 
         
         let chatHistory = JSON.parse(localStorage.getItem('zaxca_history')) || [];
@@ -550,7 +550,7 @@
             } catch (error) {
                 inputField.disabled = false;
                 inputField.value = rawText;
-                alert("Connection failed during optimization. Please check your Railway Server.");
+                alert("Connection failed during optimization.");
             }
         }
 
@@ -566,6 +566,7 @@
 
             if (welcomeScreen) welcomeScreen.style.display = "none";
 
+            // Add User Message
             chatBox.innerHTML += `
                 <div class="message-row user">
                     <div class="message-bubble user">${message}</div>
@@ -609,7 +610,7 @@
                 loadingMsg.style.display = "none";
                 chatBox.innerHTML += `
                     <div class="message-row ai">
-                        <div class="message-bubble ai" style="color: red;"><strong>Connection Failed!</strong> CORS Error or Server is down.</div>
+                        <div class="message-bubble ai" style="color: red;"><strong>Connection Failed!</strong> Check Railway Server.</div>
                     </div>`;
             }
             
